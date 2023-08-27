@@ -1,0 +1,64 @@
+// Future Dominators
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int n;
+vector<vector<bool>> used;
+vector<vector<int>> board;
+
+bool isGood(int x, int y) {
+    int dx[] = {-1, 1, 0, 0};
+    int dy[] = {0, 0, -1, 1};
+
+    for (int i = 0; i < 4; ++i) {
+        int nx = x + dx[i];
+        int ny = y + dy[i];
+
+        if (nx >= 0 && nx < n && ny >= 0 && ny < n) {
+            if (!used[nx][ny] && board[nx][ny] < board[x][y]) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main() {
+    int q;
+    cin >> n >> q;
+
+    used.assign(n, vector<bool>(n, false));
+    board.assign(n, vector<int>(n, 0));
+
+    int prevAns = 0;
+
+    for (int i = 1; i <= n * n; ++i) {
+        int x = 0, y = 0;
+
+        if (i > 1) {
+            int k;
+            cin >> k;
+            prevAns ^= k;
+        }
+
+        x = prevAns ^ x;
+        y = prevAns ^ y;
+
+        // Find the largest number that can be placed in the current cell
+        for (int num = n * n; num >= 1; --num) {
+            if (!used[x][y] && isGood(x, y)) {
+                board[x][y] = num;
+                used[x][y] = true;
+                cout << num << " ";
+                break;
+            }
+        }
+    }
+
+    cout << endl;
+
+    return 0;
+}
